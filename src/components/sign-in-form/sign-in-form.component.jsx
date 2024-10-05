@@ -5,7 +5,7 @@ import './sign-in-form.styles.scss'
 import FormInput from "../form-input/form-input.component";
 import Button from "../button/button.component";
 
-import { signInWithGooglePopup, createUserDocumentFromAuth, signInAuthUserWithEmailAndPassword } from "../../utils/firebase/firebase.utils";
+import { signInWithGooglePopup, signInAuthUserWithEmailAndPassword } from "../../utils/firebase/firebase.utils";
 
 const defaultFormFields = {
     email: '',
@@ -17,27 +17,24 @@ const SignInForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { email, password } = formFields;
 
-    console.log(formFields);
 
     const resetFormFields = () => {
         setFormFields(defaultFormFields);
     };
 
     const signInWithGoogle = async () => {
-        const { user } = await signInWithGooglePopup();
-        await createUserDocumentFromAuth(user)
+        await signInWithGooglePopup();
     }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         try {
-            const response = await signInAuthUserWithEmailAndPassword(email, password);
-            console.log(response)
+            const { user } = await signInAuthUserWithEmailAndPassword(email, password);
             resetFormFields();
         } catch (err) {
-            
-            if(err.code === "auth/invalid-credential"){
+
+            if (err.code === "auth/invalid-credential") {
                 alert('invalid-credential')
             }
             console.log(err);
@@ -59,7 +56,7 @@ const SignInForm = () => {
                 <FormInput label="Password" type="password" onChange={handleChange} name='password' value={password} required />
                 <div className="buttons-container">
                     <Button type="submit">Sign In</Button>
-                    <Button  type="button" buttonType="google" onClick={signInWithGoogle}>Google</Button>
+                    <Button type="button" buttonType="google" onClick={signInWithGoogle}>Google</Button>
                 </div>
 
             </form>
